@@ -1,2 +1,2 @@
 # FullStack
-HY:n kurssin FullStackOpen tehtävät
+HY:n kurssille FullStackOpen palautettavat tehtävät.
