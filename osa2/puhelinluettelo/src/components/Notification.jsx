@@ -2,7 +2,7 @@ const Notification = ({ message }) => {
     if (message === null) {
       return null
     }
-    if (message.endsWith('removed from the server')) {
+    if (message.startsWith('Error:')) {
       return (
         <div className="error">
         {message}

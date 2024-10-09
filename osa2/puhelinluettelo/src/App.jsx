@@ -50,7 +50,7 @@ const App = () => {
               setNewNumber('')
             })
             .catch(error => {
-              setNotifyMessage(`${newPerson.name} was already removed from the server`)
+              setNotifyMessage(`Error: ${error.response.data.error}`)
               setTimeout(() => {
                 setNotifyMessage(null)
               }, 3000)
@@ -69,24 +69,30 @@ const App = () => {
         setNewName('')
         setNewNumber('')
       })
+      .catch(error => {
+        setNotifyMessage(`Error: ${error.response.data.error}`)
+        setTimeout(() => {
+          setNotifyMessage(null)
+        }, 3000)
+      })
   }
 }
 
   const removePerson = (id) => {
-    const person = persons.find(p => p.id === id)
+    const personToRemove = persons.find(p => p.id === id)
 
-    if (window.confirm(`Delete ${person.name}?`)) {
+    if (window.confirm(`Delete ${personToRemove.name}?`)) {
       phonebookService.deleteEntry(id)
-      .then(removed => {
+      .then(response => {
         setPersons(persons.filter(person =>
-          person.id !== removed.id))
-        setNotifyMessage(`${removed.name} removed`)
+          person.id !== personToRemove.id))
+        setNotifyMessage(`${personToRemove.name} removed`)
         setTimeout(() => {
           setNotifyMessage(null)
         }, 3000)
       })
       .catch(error => {
-        setNotifyMessage(`${person.name} was already removed from the server`)
+        setNotifyMessage(`Error: ${personToRemove.name} was already removed from the server`)
         setTimeout(() => {
           setNotifyMessage(null)
         }, 3000)
