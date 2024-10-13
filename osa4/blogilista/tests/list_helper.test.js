@@ -107,3 +107,41 @@ describe('favorite blog', () => {
     assert.strictEqual(result.likes, 12)
   })
 })
+
+describe('most blogs', () => {
+
+  test('of empty list is null', () => {
+  assert.strictEqual(listHelper.mostBlogs([]), null)
+  })
+
+  test('when list has only one blog returns that', () => {
+    const result = listHelper.mostBlogs(listWithOneBlog)
+    assert.strictEqual(result.author, 'Edsger W. Dijkstra')
+    assert.strictEqual(result.blogs, 1)
+  })
+
+  test('of a bigger list returnes author with most blogs', () => {
+    const result = listHelper.mostBlogs(blogs)
+    assert.strictEqual(result.author, 'Robert C. Martin')
+    assert.strictEqual(result.blogs, 3)
+  })
+})
+
+describe('most likes', () => {
+
+  test('of empty list is null', () => {
+  assert.strictEqual(listHelper.mostLikes([]), null)
+  })
+
+  test('when list has only one blog returns that', () => {
+    const result = listHelper.mostLikes(listWithOneBlog)
+    assert.strictEqual(result.author, 'Edsger W. Dijkstra')
+    assert.strictEqual(result.likes, 5)
+  })
+
+  test('of a bigger list returnes author with most blogs', () => {
+    const result = listHelper.mostLikes(blogs)
+    assert.strictEqual(result.author, 'Edsger W. Dijkstra')
+    assert.strictEqual(result.likes, 17)
+  })
+})
