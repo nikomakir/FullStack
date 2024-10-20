@@ -2,8 +2,8 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-    "title": "AAA",
-    "author": "Eija Kovanen",
+    "title": "Hapso",
+    "author": "Mikko Kovanen",
     "url": "https://kdda.kaks",
-    "likes": 1
+    "likes": 2
 }
