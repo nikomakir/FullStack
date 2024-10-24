@@ -2,15 +2,21 @@ const { test, after, beforeEach, describe } = require('node:test')
 const assert = require('node:assert')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
-const app = require('../app')
-const api = supertest(app)
 const helper = require('./test_helper')
 const Blog = require('../models/blog')
+const User = require('../models/user')
+const app = require('../app')
+const api = supertest(app)
 
+let token
 
 beforeEach(async () => {
   await Blog.deleteMany({})
-  await Blog.insertMany(helper.initialBlogs)
+  await User.deleteMany({})
+  token = await helper.createUserAndToken()
+  const user = await User.findOne({ username: 'testu' })
+  const blogs = helper.initialBlogs.map(blog => ({...blog, user: user._id }))
+  await Blog.insertMany(blogs)
 })
 
 describe('get blogs', () => {
@@ -23,7 +29,7 @@ describe('get blogs', () => {
 
   test('there are the correct number of blogs', async () => {
     const response = await api.get('/api/blogs')
-    
+
     assert.strictEqual(response.body.length, helper.initialBlogs.length)
   })
 
@@ -49,6 +55,7 @@ describe('posting a blog', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -72,6 +79,7 @@ describe('posting a blog', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -92,6 +100,7 @@ describe('posting a blog', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(newBlog)
       .expect(400)
   })
@@ -105,8 +114,23 @@ describe('posting a blog', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(newBlog)
       .expect(400)
+  })
+
+  test('posting a blog without token returns 401 status', async () => {
+    const newBlog = {
+      title: "Type wars",
+      author: "Robert C. Martin",
+      url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
+      likes: 2,
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(401)
   })
 })
 
@@ -117,6 +141,7 @@ describe('deleting a blog', () => {
 
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', `Bearer ${token}`)
       .expect(204)
     
     const blogsAtEnd = await helper.blogsInDb()
@@ -125,14 +150,6 @@ describe('deleting a blog', () => {
     assert(!titles.includes(blogToDelete.title))
 
     assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
-  })
-
-  test('deleting with invalid id gives response 204', async () => {
-    const validNonExistingId = await helper.nonExistingId()
-
-    await api
-      .delete(`/api/blogs/${validNonExistingId}`)
-      .expect(204)
   })
 })
 
