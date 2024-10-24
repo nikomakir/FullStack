@@ -1,9 +1,10 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im5pa2EiLCJpZCI6IjY3MTUxZTZhYWIwNDhhMzY1YjRkZWY2MyIsImlhdCI6MTcyOTQ1OTgxMywiZXhwIjoxNzI5NDYzNDEzfQ.KkiPCP2aA73UNx0IglqxdehPE7Bi73SbjEf8q7JdKpg
 
 {
-    "title": "Hapso",
-    "author": "Mikko Kovanen",
-    "url": "https://kdda.kaks",
-    "likes": 2
+    "title": "Kaikki Toimii xxx",
+    "author": "Maija Meikäläinen",
+    "url": "https://ahaa.com",
+    "likes": 1
 }

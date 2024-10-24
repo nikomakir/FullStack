@@ -1,6 +1,6 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
-const User = require('../models/user')
+
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog
@@ -14,8 +14,8 @@ blogsRouter.post('/', async (request, response) => {
   if (!body.title | !body.url) {
     response.status(400).end()
   }
-  const allUsers = await User.find({})
-  const user = allUsers[0]
+
+  const user = request.user
 
   const blog = new Blog({
     title: body.title,
@@ -33,8 +33,14 @@ blogsRouter.post('/', async (request, response) => {
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
-  await Blog.findByIdAndDelete(request.params.id)
-  response.status(204).end()
+  const user = request.user
+  const blog = await Blog.findById(request.params.id)
+  if (blog.user.toString() === user._id.toString()) {
+    await blog.deleteOne()
+    response.status(204).end()
+  } else {
+    response.status(401).json({ error: 'user and blog do not match'})
+  }
 })
 
 blogsRouter.put('/:id', async (request, response) => {
