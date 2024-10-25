@@ -12,7 +12,7 @@ blogsRouter.get('/', async (request, response) => {
 blogsRouter.post('/', async (request, response) => {
   const body = request.body
   if (!body.title | !body.url) {
-    response.status(400).end()
+    return response.status(400).json({ error: 'title or url missing' })
   }
 
   const user = request.user
@@ -43,7 +43,7 @@ blogsRouter.delete('/:id', async (request, response) => {
     await blog.deleteOne()
     response.status(204).end()
   } else {
-    response.status(401).json({ error: 'user and blog do not match'})
+    return response.status(401).json({ error: 'user and blog do not match'})
   }
 })
 
