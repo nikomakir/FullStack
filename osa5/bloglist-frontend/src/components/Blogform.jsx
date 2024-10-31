@@ -1,58 +1,58 @@
 import { useState } from 'react'
 
 const Blogform = ({ createBlog }) => {
-    const [title, setTitle] = useState('')
-    const [author, setAuthor] = useState('')
-    const [url, setUrl] = useState('')
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
 
-    const addBlog = (event) => {
-      event.preventDefault()
-      createBlog({
-        title,
-        author,
-        url
-      })
+  const addBlog = (event) => {
+    event.preventDefault()
+    createBlog({
+      title,
+      author,
+      url
+    })
 
-      setTitle('')
-      setAuthor('')
-      setUrl('')
-    }
+    setTitle('')
+    setAuthor('')
+    setUrl('')
+  }
 
-    return (
+  return (
     <>
       <h2>create new</h2>
       <form onSubmit={addBlog}>
-      <div>
+        <div>
         title:
-        <input
-        type='text'
-        value={title}
-        name='Title'
-        onChange={event => setTitle(event.target.value)}
-        />
-      </div>
-      <div>
+          <input
+            type='text'
+            value={title}
+            name='Title'
+            onChange={event => setTitle(event.target.value)}
+          />
+        </div>
+        <div>
         author:
-        <input
-        type='text'
-        value={author}
-        name='Author'
-        onChange={event => setAuthor(event.target.value)}
-        />
-      </div>
-      <div>
+          <input
+            type='text'
+            value={author}
+            name='Author'
+            onChange={event => setAuthor(event.target.value)}
+          />
+        </div>
+        <div>
         url:
-        <input
-        type='text'
-        value={url}
-        name='Url'
-        onChange={event => setUrl(event.target.value)}
-        />
-      </div>
-      <button type='submit'>create</button>
+          <input
+            type='text'
+            value={url}
+            name='Url'
+            onChange={event => setUrl(event.target.value)}
+          />
+        </div>
+        <button type='submit'>create</button>
       </form>
     </>
-    )
+  )
 }
 
 export default Blogform

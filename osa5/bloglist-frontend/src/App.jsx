@@ -16,8 +16,7 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
+      setBlogs(blogs))
   }, [])
 
   useEffect(() => {
@@ -66,6 +65,12 @@ const App = () => {
     try {
       blogFormRef.current.toggleVisibility()
       const blog = await blogService.create(blogObject)
+      const UserID = blog.user
+      blog.user = {
+        id: UserID,
+        username: user.username,
+        name: user.name
+      }
       setBlogs(blogs.concat(blog))
       setErrorMessage(`a new blog ${blog.title} by ${blog.author} added`)
       setTimeout(() => {
@@ -79,6 +84,52 @@ const App = () => {
     }
   }
 
+  const likeBlog = async blog => {
+    const likedBlog = {
+      ...blog,
+      user: blog.user.id,
+      likes: blog.likes + 1
+    }
+
+    try {
+      const newBlog = await blogService.update(blog.id, likedBlog)
+      setBlogs(blogs.map(blog => blog.id !== newBlog.id
+        ? blog : {
+          ...newBlog,
+          user: blog.user
+        }))
+      setErrorMessage(`${newBlog.title} liked!`)
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    } catch (exception) {
+      setErrorMessage('Error updating like')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    }
+  }
+
+  const deleteBlog = async blog => {
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
+      try {
+        await blogService.deleteBlog(blog.id)
+        setBlogs(blogs.filter(b => b.id !== blog.id))
+        setErrorMessage(`${blog.title} by ${blog.author} deleted!`)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+      } catch (exception) {
+        setErrorMessage('Error: user and blog do not match!')
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+      }
+    }
+  }
+
+  blogs.sort((a, b) => b.likes - a.likes)
+
   if (user === null) {
     return (
       <div>
@@ -87,7 +138,7 @@ const App = () => {
         <form onSubmit={handleLogin}>
           <div>
             username
-              <input
+            <input
               type="text"
               value={username}
               name="Username"
@@ -95,7 +146,7 @@ const App = () => {
           </div>
           <div>
             password
-              <input
+            <input
               type="password"
               value={password}
               name="Password"
@@ -119,7 +170,13 @@ const App = () => {
       </Togglable>
 
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog
+          key={blog.id}
+          blog={blog}
+          handleLike={() => likeBlog(blog)}
+          handleDelete={() => deleteBlog(blog)}
+          showDelete={user.username === blog.user.username}
+        />
       )}
     </div>
   )
