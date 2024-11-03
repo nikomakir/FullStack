@@ -91,5 +91,24 @@ describe('Blog app', () => {
       await secondBlog.getByRole('button', { name: 'view' }).click()
       await expect(page.getByRole('button', { name: 'remove' })).toBeVisible()
     })
+
+    test('blogs are sorted by most likes', async ({ page }) => {
+      await createBlog(page, 'Test Title', 'Me', 'http...')
+      await createBlog(page, 'Completely Different', 'You', 'website')
+
+      const blogsAtStart = page.getByTestId('blog')
+
+      await expect(blogsAtStart.first()).toContainText('Test Title Me')
+      await expect(blogsAtStart.last()).toContainText('Completely Different You')
+
+      await page.getByText('Test Title Me view').getByRole('button', { name: 'view' }).click()
+      await page.getByText('Completely Different You view').getByRole('button', { name: 'view' }).click()
+      await page.getByText('Completely Different You hide').locator('..').getByRole('button', { name: 'like' }).click()
+
+      const blogs = page.getByTestId('blog')
+
+      await expect(blogs.first()).toContainText('Completely Different You')
+      await expect(blogs.last()).toContainText('Test Title Me')
+    })
   })
 })

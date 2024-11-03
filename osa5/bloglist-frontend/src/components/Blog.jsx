@@ -18,7 +18,7 @@ const Blog = ({ blog, handleLike, handleDelete, showDelete }) => {
   }
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} data-testid='blog'>
       <div>
         {blog.title} {blog.author} <button onClick={toggleView}>{fullView ? 'hide' : 'view'}</button>
       </div>
